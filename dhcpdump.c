@@ -71,6 +71,7 @@ void	printReqParmList(u_char *data, int len);
 void	printHexColon(u_char *data, int len);
 void	printHex(u_char *data, int len);
 void	printHexString(u_char *data, int len);
+void	printGUID(u_char *data);
 
 void usage() {
 	printf("Usage: $0 <-i interface>|<-r tcpdump_file> [-h macaddress]\n");
@@ -280,7 +281,7 @@ void printHexString(u_char *data, int len) {
 			if (i * 8 + j >= len) break;
 			printf("%c", isprint(c) ? c : '.');
 		}
-		if (i * 8 + j < len) printf("\n\t\t\t\t\t    ");
+		if (i * 8 + j < len) printf("\n\t\t\t\t\t      ");
 	}
 }
 
@@ -313,14 +314,23 @@ void printReqParmList(u_char *data, int len) {
 
 	for (i = 0; i < len; i++) {
 		printf("%3d (%s)\n", data[i], dhcp_options[data[i]]);
-		printf("\t\t\t\t\t    ");
+		printf("\t\t\t\t\t      ");
 	}
+}
+
+void printGUID(u_char *data) {
+	printf("%02X%02X%02X%02X",data[0],data[1],data[2],data[3]);
+	data += 4;
+	printf("-%02X%02X-%02X%02X-%02X%02X",data[0],data[1],data[2],data[3],data[4],data[5]);
+	data += 6;
+	printf("%02X%02X%02X%02X%02X%02X",data[0],data[1],data[2],data[3],data[4],data[5]);
 }
 
 // print the header and the options.
 int printdata(u_char *data, int data_len) {
 	int	j, i;
 	char	buf[LARGESTRING];
+	uint16_t *arch_type;
 
 	if (data_len == 0)
 		return 0;
@@ -348,7 +358,7 @@ int printdata(u_char *data, int data_len) {
 	j = 236;
 	j += 4;	/* cookie */
 	while (j < data_len && data[j] != 255) {
-		printf("OPTION: %3d (%3d) %-26s", data[j], data[j + 1],
+		printf("OPTION: %3d (%3d) %-28s", data[j], data[j + 1],
 		    dhcp_options[data[j]]);
 
 	switch (data[j]) {
@@ -552,7 +562,74 @@ int printdata(u_char *data, int data_len) {
 			i += data[i + 1] + 2;
 		}
 		break;
+	case 97:	// Client Machine Identifier
+		if(data[j+1]==17 && data[j+2]==0) {
+			printGUID(data+j+3);
+		} else {
+			printHexString(data + j + 2, data[j + 1]);
+		}
+		break;
+	case 94:	//Client Network Interface Identifier
+		{
+			char _type=data[j+2];
+			char _M=data[j+3];
+			char _m=data[j+4];
+			if(_type==1) {
+				printf("UNDI %d.%d",_M,_m);
+			} else {
+				printf("UNKNOW TYPE");
+			}
+			printf(" (");
+			printHexColon(data + j + 2,3);
+			printf(")");
+		}
+		break;
 
+	case 93:	// Client System Architecture Type
+		for(i = j + 2; i <= j + data[j + 1];i+=2) {
+			arch_type=(uint16_t *)(data+i);
+			switch(ntohs(*arch_type)) {
+				case 0:
+					printf("Intel x86PC");
+					break;
+				case 1:
+					printf("NEC/PC98");
+					break;
+				case 2:
+					printf("EFI Itanium");
+					break;
+				case 3:
+					printf("DEC Alpha");
+					break;
+				case 4:
+					printf("Arc x86");
+					break;
+				case 5:
+					printf("Intel Lean Client");
+					break;
+				case 6:
+					printf("EFI IA32");
+					break;
+				case 7:
+					printf("EFI x86-64");
+					break;
+				case 8:
+					printf("EFI Xscale");
+					break;
+				case 9:
+					printf("EFI BC");
+					break;
+				default:
+					printf("UNKNOW");
+			}
+			printf(" (");
+			printHexColon(data + i, 2);
+			printf(")");
+			if(i + 2 <= j + data[j+1]) {
+				printf(", ");
+			}
+		}
+		break;
 	}
 	printf("\n");
 
