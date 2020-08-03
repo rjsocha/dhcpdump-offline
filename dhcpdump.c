@@ -584,7 +584,6 @@ int printdata(u_char *data, int data_len) {
 			printf(")");
 		}
 		break;
-
 	case 93:	// Client System Architecture Type
 		for(i = j + 2; i <= j + data[j + 1];i+=2) {
 			arch_type=(uint16_t *)(data+i);
