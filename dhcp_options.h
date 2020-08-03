@@ -2,9 +2,8 @@
 // $Id: dhcp_options.h,v 1.4 2004/10/31 11:22:58 mavetju Exp $
 //
 
-// Update options 128-135 as PXE 
+// Update options 128-135 as PXE
 // https://tools.ietf.org/html/rfc4578
-
 //
 // this list was stolen from The DHCP Handbook by Droms and Lemon, Appendix D
 //
