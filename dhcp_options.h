@@ -2,6 +2,9 @@
 // $Id: dhcp_options.h,v 1.4 2004/10/31 11:22:58 mavetju Exp $
 //
 
+// Update options 128-135 as PXE 
+// https://tools.ietf.org/html/rfc4578
+
 //
 // this list was stolen from The DHCP Handbook by Droms and Lemon, Appendix D
 //
@@ -136,14 +139,14 @@ const char *dhcp_options[] = {
 /* 125 */	"???",
 /* 126 */	"Extension",
 /* 127 */	"Extension",
-/* 128 */	"???",
-/* 129 */	"???",
-/* 130 */	"???",
-/* 131 */	"???",
-/* 132 */	"???",
-/* 133 */	"???",
-/* 134 */	"???",
-/* 135 */	"???",
+/* 128 */	"PXE",
+/* 129 */	"PXE",
+/* 130 */	"PXE",
+/* 131 */	"PXE",
+/* 132 */	"PXE",
+/* 133 */	"PXE",
+/* 134 */	"PXE",
+/* 135 */	"PXE",
 /* 136 */	"???",
 /* 137 */	"???",
 /* 138 */	"???",
