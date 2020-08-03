@@ -15,7 +15,7 @@ dhcpdump.8: dhcpdump.pod Makefile
 		dhcpdump.pod dhcpdump.8
 
 dhcpdump: dhcpdump.o
-	${CC} ${LDFLAGS} -o $@ dhcpdump.o ${LIBS}
+	${CC} ${LDFLAGS} -s -o $@ dhcpdump.o ${LIBS}
 
 dhcpdump.o: dhcpdump.c dhcp_options.h Makefile
 	${CC} ${CFLAGS} -c -o $@ dhcpdump.c

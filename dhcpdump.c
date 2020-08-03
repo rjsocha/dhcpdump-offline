@@ -73,7 +73,7 @@ void	printHex(u_char *data, int len);
 void	printHexString(u_char *data, int len);
 
 void usage() {
-	printf("Usage: $0 <-i interface> [-h macaddress]\n");
+	printf("Usage: $0 <-i interface>|<-r tcpdump_file> [-h macaddress]\n");
 	exit(0);
 }
 
@@ -82,6 +82,7 @@ int main(int argc, char **argv) {
 	pcap_t *cap;
 	struct bpf_program fp;
 	char	*interface = NULL;
+	char    *offline_file = NULL;
 
 	for (i = 1; i < argc; i++) {
 		if (argv[i] == NULL || argv[i][0] != '-') break;
@@ -92,6 +93,9 @@ int main(int argc, char **argv) {
 		case 'i':
 			interface = argv[++i];
 			break;
+		case 'r':
+			offline_file = argv[++i];
+			break;
 		default:
 			fprintf(stderr, "%s: %c: uknown option\n",
 			    argv[0], argv[i][1]);
@@ -99,13 +103,18 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	if (interface == NULL) usage();
+	if (interface == NULL && offline_file == NULL) usage();
 
 	if (hmask)
 		regcomp(&preg, hmask, REG_EXTENDED | REG_ICASE | REG_NOSUB);
 
-	if ((cap = pcap_open_live(interface, 1500, 1, 100, errbuf)) == NULL)
-		errx(1, "pcap_open_live(): %s", errbuf);
+	if(interface!=NULL) {
+		if ((cap = pcap_open_live(interface, 1500, 1, 100, errbuf)) == NULL)
+			errx(1, "pcap_open_live(): %s", errbuf);
+	} else {
+		if ((cap = pcap_open_offline(offline_file,errbuf)) == NULL)
+			errx(1, "pcap_open_offline(): %s", errbuf);
+	}
 	if (pcap_compile(cap, &fp, "udp and (port bootpc or port bootps)", 0, 0) < 0)
 		errx(1,"pcap_compile: %s", pcap_geterr(cap));
 	if (pcap_setfilter(cap, &fp) < 0)

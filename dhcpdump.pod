@@ -8,7 +8,7 @@ B<dhcpdump> - DHCP packet dumper
 
 =head1 SYNOPSIS
 
-B<dhcpdump> [B<-h> I<regular-expression>] B<-i> I<interface>
+B<dhcpdump> [B<-h> I<regular-expression>] <B<-i> I<interface> | B<-r> I<pcap_file>>
 
 =head1 DESCRIPTION
 
@@ -17,7 +17,13 @@ easier checking and debugging.
 
 =head1 USAGE
 
+for live capture:
+
 S<dhcpdump -i /dev/fxp0>
+
+or for PCAP file:
+
+S<dhcpdump -r pcap-file-name>
 
 If you want to filter a specific Client Hardware Address (CHADDR), then
 you can specifiy it as a regular expressions:
