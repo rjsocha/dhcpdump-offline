@@ -587,39 +587,125 @@ int printdata(u_char *data, int data_len) {
 	case 93:	// Client System Architecture Type
 		for(i = j + 2; i <= j + data[j + 1];i+=2) {
 			arch_type=(uint16_t *)(data+i);
+			// https://www.ietf.org/assignments/dhcpv6-parameters/dhcpv6-parameters.xml
+			// Belowe definitions are for DHCPv6 option 61 but they are compatible with DHCPv4 option
+			// see https://tools.ietf.org/html/rfc5970#section-3.3
+			// EDK 2 definies few of them
+			// I only saw  arch type 0x10 on x64 UEFI servers with DHCPv4
 			switch(ntohs(*arch_type)) {
-				case 0:
-					printf("Intel x86PC");
+				case 0x00:
+					printf("x86 BIOS");
 					break;
-				case 1:
-					printf("NEC/PC98");
+				case 0x01:
+					printf("NEC/PC98");		// DEPRECATED
 					break;
-				case 2:
-					printf("EFI Itanium");
+				case 0x02:
+					printf("Itanium");
 					break;
-				case 3:
-					printf("DEC Alpha");
+				case 0x03:
+					printf("DEC Alpha");		// DEPRECATED
 					break;
-				case 4:
-					printf("Arc x86");
+				case 0x04:
+					printf("Arc x86");		// DEPRECATED
 					break;
-				case 5:
-					printf("Intel Lean Client");
+				case 0x05:
+					printf("Intel Lean Client");	// DEPRECATED
 					break;
-				case 6:
-					printf("EFI IA32");
+				case 0x06:
+					printf("x86 UEFI");			
 					break;
-				case 7:
-					printf("EFI x86-64");
+				case 0x07:
+					printf("x64 UEFI");
 					break;
-				case 8:
-					printf("EFI Xscale");
+				case 0x08:
+					printf("EFI Xscale");		// DEPRECATED
 					break;
-				case 9:
-					printf("EFI BC");
+				case 0x09:
+					printf("EBC");
+					break;
+				case 0x0A:
+					printf("ARM 32-bit UEFI");
+					break;
+				case 0x0B:
+					printf("ARM 64-bit UEFI");
+					break;
+				case 0x0C:
+					printf("PowerPC Open Firmware");
+					break;
+				case 0x0D:
+					printf("PowerPC ePAPR");
+					break;
+				case 0x0E:
+					printf("POWER OPAL v3");
+					break;
+				case 0x0F:
+					printf("x86 uefi boot from http");
+					break;
+				case 0x10:
+					printf("x64 uefi boot from http");
+					break;
+				case 0x11:
+					printf("ebc boot from http");
+					break;
+				case 0x12:
+					printf("arm uefi 32 boot from http");
+					break;
+				case 0x13:
+					printf("arm uefi 64 boot from http");
+					break;
+				case 0x14:
+					printf("pc/at bios boot from http");
+					break;
+				case 0x15:
+					printf("arm 32 uboot");
+					break;
+				case 0x16:
+					printf("arm 64 uboot");
+					break;
+				case 0x17:
+					printf("arm uboot 32 boot from http");
+					break;
+				case 0x18:
+					printf("arm uboot 64 boot from http");
+					break;
+				case 0x19:
+					printf("RISC-V 32-bit UEFI");
+					break;
+				case 0x1A:
+					printf("RISC-V 32-bit UEFI boot from http");
+					break;
+				case 0x1B:
+					printf("RISC-V 64-bit UEFI");
+					break;
+				case 0x1C:
+					printf("RISC-V 64-bit UEFI boot from http");
+					break;
+				case 0x1D:
+					printf("RISC-V 128-bit UEFI");
+					break;
+				case 0x1E:
+					printf("RISC-V 128-bit UEFI boot from http");
+					break;
+				case 0x1F:
+					printf("s390 Basic");
+					break;
+				case 0x20:
+					printf("s390 Extended");
+					break;
+				case 0x21:
+					printf("MIPS 32-bit UEFI");
+					break;
+				case 0x22:
+					printf("MIPS 64-bit UEFI");
+					break;
+				case 0x23:
+					printf("Sunway 32-bit UEFI");
+					break;
+				case 0x24:
+					printf("Sunway 64-bit UEFI");
 					break;
 				default:
-					printf("UNKNOW");
+					printf("UNASSIGNED");
 			}
 			printf(" (");
 			printHexColon(data + i, 2);
